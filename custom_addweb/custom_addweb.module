@@ -14,10 +14,10 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function custom_addweb_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
-    // Main module help for the addweb module.
+    // Main module help for the custom addweb module.
     case 'help.page.custom_addweb':
       $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<h3>' . t('About Module Custom Addweb') . '</h3>';
       $output .= '<p>' . t('This is custom requirements for a specific module for Addweb assignment.') . '</p>';
       return $output;
 

@@ -20,7 +20,7 @@ class AddwebController extends ControllerBase {
    *
    * @return jsonoutput
    *
-   *   Json response for page node.
+   *   Json response.
    */
   public function customAaddwebJson($key, $nid) {
     // Get the Site API Key from configuration.
@@ -34,7 +34,7 @@ class AddwebController extends ControllerBase {
         // Load the Node using the Node id from the request URL.
         $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
 
-        // Check if the node type is 'page'.
+        // Check node type.
         if (!empty($node) && $node->getType() === $default_content_type) {
           // Build appropriate JSON response.
           $json_response = [
@@ -47,7 +47,7 @@ class AddwebController extends ControllerBase {
           return new JsonResponse($json_response);
         }
         else {
-          // When other content types.
+          // Content types not selected from site setting.
           $response['success'] = FALSE;
           $response['error'] = 'access denied';
           $response['message'] = t('Not the desired content type (@type), please check on the Site Details.', ['@type' => $default_content_type]);
