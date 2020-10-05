@@ -24,7 +24,7 @@
 ## Test Submission
 
 ## Total time to complete task
-Time :- 7-8 hours. (05/10/2020 after PM).
+Time :- 5-6 hours. (05/10/2020 after PM).
 
 ## List of resources :-
 * previous knowledge
