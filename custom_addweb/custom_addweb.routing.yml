@@ -1,0 +1,7 @@
+custom_addweb.custom_addweb_json:
+  path: '/page_json/{key}/{nid}'
+  defaults:
+    _controller: '\Drupal\custom_addweb\Controller\AddwebController::customAaddwebJson'
+    _title: 'addweb json'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,98 @@
+<?php
+
+/**
+ * @file
+ * Contains custom_addweb.module.
+ */
+
+use Drupal\node\Entity\NodeType;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function custom_addweb_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the addweb module.
+    case 'help.page.custom_addweb':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This is custom requirements for a specific module for Addweb assignment.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function custom_addweb_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Get the site api key.
+  $site_api_key = \Drupal::config('system.site')->get('site_api_key');
+  $site_content_type = \Drupal::config('system.site')->get('api_content_type');
+
+  // Get default site api key from configuration.
+  $default_site_api_key = \Drupal::config('custom_addweb.configuration')->get('site_api_key');
+  $default_api_type = \Drupal::config('custom_addweb.configuration')->get('api_content_type');
+
+  $node_types = NodeType::loadMultiple();
+  // If you need to display them in a drop down:
+  $options = [];
+  foreach ($node_types as $node_type) {
+    $options[$node_type->id()] = $node_type->label();
+  }
+
+  // Add field for site api key.
+  $form['site_information']['site_api_key'] = [
+    '#type' => 'textfield',
+    '#title' => t('Site API Key'),
+    '#default_value' => !empty($site_api_key) ? $site_api_key : $default_site_api_key,
+  ];
+
+  $form['site_information']['content_type'] = [
+    '#title' => t('Content Type'),
+    '#type' => 'select',
+    '#description' => 'Select the content type for API key setting.',
+    '#options' => $options,
+    '#default_value' => !empty($site_content_type) ? $site_content_type : $default_api_type,
+  ];
+  // Site api key check.
+  if (!empty($site_api_key) && $site_api_key !== $default_site_api_key) {
+    $form['actions']['submit']['#value'] = t('Update Configuration');
+  }
+  $form['#submit'][] = 'custom_addweb_handler';
+}
+
+/**
+ * Implements drupal_handler() on behalf of custom_addweb.module.
+ */
+function custom_addweb_handler($form, &$form_state) {
+  $values = $form_state->getValues();
+  // Get the site api key.
+  $site_api_key = \Drupal::config('system.site')->get('site_api_key');
+  // Get default site api key from configuration.
+  $default_site_api_key = \Drupal::config('custom_addweb.configuration')->get('site_api_key');
+
+  $default_type = \Drupal::config('custom_addweb.configuration')->get('api_content_type');
+  $api_type = $form_state->getValue('content_type');
+
+  if (!empty($values['site_api_key']) && $values['site_api_key'] !== $default_site_api_key) {
+    // Set the site api key.
+    \Drupal::configFactory()->getEditable('system.site')->set('site_api_key', $values['site_api_key'])->save();
+
+    \Drupal::configFactory()->getEditable('system.site')->set('api_content_type', $api_type)->save();
+
+    drupal_set_message(t('Site API Key :<b>@site_api_key</b> and Type: <b>@type</b> has been saved.', ['@site_api_key' => $site_api_key, '@type' => $api_type]));
+  }
+  else {
+    if ($values['site_api_key'] !== $default_site_api_key) {
+      drupal_set_message(t('Please Configure Site API Key.'), 'warning');
+    }
+    else {
+      // If user configure default value.
+      drupal_set_message(t('Please Configure another site api key.'), 'warning');
+    }
+  }
+}

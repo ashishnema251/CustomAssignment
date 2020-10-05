@@ -1,0 +1,6 @@
+name: custom_addweb
+type: module
+description: This is custom requirements for a specific module.
+core: 8.x
+package: Custom
+core_version_requirement: ^8 || ^9
